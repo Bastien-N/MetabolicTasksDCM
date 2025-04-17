@@ -1,12 +1,15 @@
 #-----------------------------------#
-#   4- Clustering MAGNET DCM Data   #
+#   3- Clustering MAGNET DCM Data   #
 #-----------------------------------#
 #Last run on 11-09-2023
 ##- (1) Setup -#
 set.seed(20230525)
 #-- LocalDir definition
-localDir <- "../Results/4_MAGNET_DCM_clustering/"
+localDir <- "../Results/3_MAGNET_DCM_clustering/"
+if(!dir.exists(localDir)){ dir.create(localDir) }
 setwd(localDir)
+if(!dir.exists("Tables")){ dir.create("Tables") }
+if(!dir.exists("Plots")){ dir.create("Plots") }
 #-- Libraries -#
 library(openxlsx)
 library(ggplot2)
@@ -278,8 +281,8 @@ ggplot(test_cluster,aes(logFC,-log(q.value))) +
 ggsave("Plots/volcano_plot_qvals.png")
 
 
-#save.image("../../Data/saved_wkspaces/4_end.RData")
-load("../../Data/saved_wkspaces/4_end.RData")
+save.image("../../Data/saved_wkspaces/3_end.RData")
+#load("../../Data/saved_wkspaces/3_end.RData")
 
 # #################
 # probs <- seq(0,1,0.001)

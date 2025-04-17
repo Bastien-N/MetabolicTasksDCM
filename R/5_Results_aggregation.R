@@ -1,10 +1,13 @@
 #------------------------------------#
-#   6- Assembling results together   #
+#   5- Assembling results together   #
 #------------------------------------#
 ##- (1) Setup -#
 set.seed(20230525)
 #-- LocalDir definition
-localDir <- "../Results/6_Final_touches/"
+localDir <- "../Results/5_Combined_results_xlsx/"
+if(!dir.exists(localDir)){
+  dir.create(localDir)
+}
 setwd(localDir)
 #-- Libraries -#
 library(ggplot2)
@@ -224,85 +227,46 @@ SigCliffStyle <- createStyle(textDecoration = "bold")
 subSystemColors <- c("#ccccff","#fa8072","#c1e1c3","#ffffcc","#dddddd","#facf5e",
                               "#98c1d9","#8ef0e7","#ec8c4f","#f683b2")
 
-#-- wb first sheet
-wb <- createWorkbook()
-addWorksheet(wb,sheetName = "Magnet_step2")
-writeDataTable(wb,sheet = "Magnet_step2",ResultsTable1,tableStyle = "none")
-colWidth <- c(8.42,
-              8.43*3,
-              8.83*1.5,
-              8.43*5,
-              8.43*5)
-for(i in 1:length(format1)){
-  addStyle(wb,sheet = "Magnet_step2",style = baseStyle,rows = 1:353,cols = 1:10,gridExpand = T)
-  switch (format1[i],
-    "fdr" = conditionalFormatting(wb,"Magnet_step2",i,2:353,"< 0.05",style = SigQvalStyle,type = "expression"),
-    "byType" = {
-      for(ii in 1:length(subSystemColors)){
-        tmpStyle <- createStyle(bgFill = subSystemColors[ii])
-        conditionalFormatting(wb,"Magnet_step2",i,2:353,rule = existingSubs[ii],
-                              style = tmpStyle,
-                              type = "contains")
-      }
-      },
-    "Cliff" = {
-      tmpRule <- paste0("$",LETTERS[i-1],"2:$",LETTERS[i-1],"353 < 0.05")
-      conditionalFormatting(wb,"Magnet_step2",i,2:353,tmpRule,style = SigCliffStyle,type = "expression")
-      conditionalFormatting(wb,"Magnet_step2",i,2:353,rule = c(-1,0,1),
-                            style = c("#0000ff","#ffffff","#cc0000"),type = "colourScale")
-      },
-    "FC" = {
-      tmpRule <- paste0("$",LETTERS[i-2],"2:$",LETTERS[i-2],"353 < 0.05")
-      extreme <- max(abs(ResultsTable1[,i]),na.rm = T)
-      conditionalFormatting(wb,"Magnet_step2",i,2:353,tmpRule,style = SigCliffStyle,type = "expression")
-      conditionalFormatting(wb,"Magnet_step2",i,2:353,rule = c(-extreme,0,extreme),
-                            style = c("#0000ff","#ffffff","#cc0000"),type = "colourScale")
-    }
-    )
-}
-setColWidths(wb,sheet = "Magnet_step2",cols = 1:5,widths = colWidth)
-setColWidths(wb,sheet = "Magnet_step2",cols = 6:ncol(ResultsTable1),widths = "auto")
-addStyle(wb,sheet = "Magnet_step2",style = baseStyle,rows = 1:353,cols = 1:10,gridExpand = T)
-freezePane(wb,sheet = "Magnet_step2",firstActiveCol = 2)
 #-- wb second sheet 
-addWorksheet(wb,sheetName = "Magnet_step3to5")
-writeDataTable(wb,sheet = "Magnet_step3to5",ResultsTable2,tableStyle = "none")
+wb <- createWorkbook()
+addWorksheet(wb,sheetName = "Magnet")
+writeDataTable(wb,sheet = "Magnet",ResultsTable2,tableStyle = "none")
 colWidth <- c(8.42,
               8.43*3,
               8.83*1.5,
               8.43*5,
               8.43*5)
 for(i in 1:length(format2)) {
-  addStyle(wb,sheet = "Magnet_step3to5",style = baseStyle,rows = 1:353,cols = 1:10,gridExpand = T)
+  addStyle(wb,sheet = "Magnet",style = baseStyle,rows = 1:353,cols = 1:10,gridExpand = T)
   switch (format2[i],
-          "fdr" = conditionalFormatting(wb,"Magnet_step3to5",i,2:353,"< 0.05",style = SigQvalStyle,type = "expression"),
+          "fdr" = conditionalFormatting(wb,"Magnet",i,2:353,"< 0.05",style = SigQvalStyle,type = "expression"),
           "byType" = {
             for(ii in 1:length(subSystemColors)){
               tmpStyle <- createStyle(bgFill = subSystemColors[ii])
-              conditionalFormatting(wb,"Magnet_step3to5",i,2:353,rule = existingSubs[ii],
+              conditionalFormatting(wb,"Magnet",i,2:353,rule = existingSubs[ii],
                                     style = tmpStyle,
                                     type = "contains")
             }
           },
           "Cliff" = {
             tmpRule <- paste0("$",LETTERS[i-1],"2:$",LETTERS[i-1],"353 < 0.05")
-            conditionalFormatting(wb,"Magnet_step3to5",i,2:353,tmpRule,style = SigCliffStyle,type = "expression")
-            conditionalFormatting(wb,"Magnet_step3to5",i,2:353,rule = c(-1,0,1),
+            conditionalFormatting(wb,"Magnet",i,2:353,tmpRule,style = SigCliffStyle,type = "expression")
+            conditionalFormatting(wb,"Magnet",i,2:353,rule = c(-1,0,1),
                                   style = c("#0000ff","#ffffff","#cc0000"),type = "colourScale")
           },
           "med.diff" = {
             tmpRule <- paste0("$",LETTERS[i-2],"2:$",LETTERS[i-2],"353 < 0.05")
             extreme <- max(abs(ResultsTable2[,i]),na.rm = T)
-            conditionalFormatting(wb,"Magnet_step3to5",i,2:353,tmpRule,style = SigCliffStyle,type = "expression")
-            conditionalFormatting(wb,"Magnet_step2",i,2:353,rule = c(-extreme,0,extreme),
+            conditionalFormatting(wb,"Magnet",i,2:353,tmpRule,style = SigCliffStyle,type = "expression")
+            conditionalFormatting(wb,"Magnet",i,2:353,rule = c(-extreme,0,extreme),
                                   style = c("#0000ff","#ffffff","#cc0000"),type = "colourScale")
           }
   )
 }
-setColWidths(wb,sheet = "Magnet_step3to5",cols = 1:5,widths = colWidth)
-setColWidths(wb,sheet = "Magnet_step3to5",cols = 6:ncol(ResultsTable2),widths = "auto")
-addStyle(wb,sheet = "Magnet_step3to5",style = baseStyle,rows = 1:353,cols = 1:ncol(ResultsTable2),gridExpand = T)
-freezePane(wb,sheet = "Magnet_step3to5",firstActiveCol = 2) 
+setColWidths(wb,sheet = "Magnet",cols = 1:5,widths = colWidth)
+setColWidths(wb,sheet = "Magnet",cols = 6:ncol(ResultsTable2),widths = "auto")
+addStyle(wb,sheet = "Magnet",style = baseStyle,rows = 1:353,cols = 1:ncol(ResultsTable2),gridExpand = T)
+freezePane(wb,sheet = "Magnet",firstActiveCol = 2) 
 
 saveWorkbook(wb,"agreggated_results_Tasks_v_groups.xlsx",overwrite = T)
 
@@ -500,20 +464,11 @@ g4
 
 g5 <- (g1 | g2)/(g3 | g4)
 
-# TaskName <- plotData |> 
-#   filter(Contrast1 == "Control_v_DCM") |> 
-#   mutate(AbsFC = abs(FC)) |> 
-#   arrange(-AbsFC) |> 
-#   slice_head(n = 15)
-# plotData |> 
-#   mutate(AbsFC = abs(FC)) |> 
-#   arrange(-AbsFC) |> 
-#   slice_head(n = 15) |> 
-# g5 <- g1
+
 
 
 ggsave("Plots/topFC_clusts.png",g5,dpi = 300,width = 32,height = 30, units = "cm")
 #############"
 
-save.image("../../Data/saved_wkspaces/6_end.RData")
+save.image("../../Data/saved_wkspaces/5_end.RData")
 #-- Initial examination revealed that tasks only sig in one cluster have abysmal effect size even for that comparison

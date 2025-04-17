@@ -1,14 +1,17 @@
 #----------------------------------#
-#   3- Comparing the task scores   #
+#   2- Comparing the task scores   #
 #      between DCM/Control in      #
 #      the  MAGNET data            #
 #----------------------------------#
-#Last run 11-09-2023
+
 ##- (1) Setup -#
 set.seed(20230525)
 #-- LocalDir definition
-localDir <- "../Results/3_MAGNET_NFvDCM/"
+localDir <- "../Results/2_MAGNET_NFvDCM/"
+if(!dir.exists(localDir)){ dir.create(localDir) }
 setwd(localDir)
+if(!dir.exists("Tables")){ dir.create("Tables") }
+if(!dir.exists("Plots")){ dir.create("Plots") }
 #-- Libraries -#
 library(openxlsx)
 library(ggplot2)
@@ -308,8 +311,8 @@ ggsave("Plots/volcano_plot_qvals.png")
 # ggsave("Plots/sigplot.svg",g4)
 
 
-#save.image("../../Data/saved_wkspaces/3_end.RData")
-load("../../Data/saved_wkspaces/3_end.RData")
+save.image("../../Data/saved_wkspaces/2_end.RData")
+#load("../../Data/saved_wkspaces/2_end.RData")
 
 #------------------------
 

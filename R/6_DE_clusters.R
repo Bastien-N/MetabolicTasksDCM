@@ -1,9 +1,13 @@
 #---------------------------------------------#
-#   7- Examining Actual gene data from tasks  #
+#   6- Examining Actual gene data from tasks  #
 #---------------------------------------------#
 
 ##- (1) Setup -#
-setwd("../Results/8_DE_clusters/")
+localDir <- "../Results/6_DE_clusters/"
+if(!dir.exists(localDir)){ dir.create(localDir) }
+setwd(localDir)
+if(!dir.exists("Tables")){ dir.create("Tables") }
+if(!dir.exists("Plots")){ dir.create("Plots")}
 #-- Libraries
 library(biomaRt)
 library(edgeR)
@@ -22,7 +26,7 @@ source("../../R/R_subscript/task_analysis_load.R")
 #-- Data
 gxData0 <- read.table(file = "../../Data/magnet_raw_counts.csv",sep = ",",header = T)
 gxData_DCM_TMM <- read.table(file = "../0_Clean_Data/geTMM_MAGNET_BC_DCM.csv",sep = ",",header = T)
-clusterTable <- read.table("../4_MAGNET_DCM_clustering/Tables/DCM_clusts_from_DCM.txt",header = T)
+clusterTable <- read.table("../3_MAGNET_DCM_clustering/Tables/DCM_clusts_from_DCM.txt",header = T)
 phenoData <- read.csv("../0_Clean_Data/magnet_phenoData_complete.csv")
 
 
@@ -162,7 +166,7 @@ design
 gxData <- estimateDisp(gxData,design = design)
 fit <- glmQLFit(gxData,design = design)
 
-save.image("../../Data/saved_wkspaces/8_DE_clusters_modelBuilt.RData")
+save.image("../../Data/saved_wkspaces/6_DE_clusters_modelBuilt.RData")
 ##- (3) DE analysis C1 v C2
 test_clust <- glmTreat(fit,contrast = makeContrasts(C1 = "groupCluster_2 - groupCluster_1",levels = design),lfc = log2(1.5))
 topTags(test_clust)
@@ -230,7 +234,7 @@ ggsave("Plots/gsea_kegg_Control_C2.png")
 write.table(keggTest_c2@result[,1:9],file = "Tables/gsea_kegg_Control_C2.txt",sep = "\t",row.names = F)
 
 
-save.image("../../Data/saved_wkspaces/8_DE_clusters_testRun.RData")
+save.image("../../Data/saved_wkspaces/6_DE_clusters_testRun.RData")
 
 
 ##- (4) specific protein complexes
@@ -401,20 +405,9 @@ test_c2$table |>
     legend.text = element_text(size = text_size),
     legend.title = element_text(size = text_size))
 ggsave("Plots/volcano_c2.png",width = 25,height = 12,units = "cm",dpi = 300)
-# Test# Test# Test
+
+save.image("../../Data/saved_wkspaces/6_end.RData")
+#load("../../Data/saved_wkspaces/6_end.RData")
 
 
-#save.image("../../Data/saved_wkspaces/8_end.RData")
-load("../../Data/saved_wkspaces/8_end.RData")
-##########"
 
-
-pcaRes <- pcaMethods::pca(t(gxData_DCM_TMM[gxData_DCM_TMM$gene %in% modelGenes,-1]),nPcs = 164)
-pcaScores <- pcaRes@scores[,pcaRes@R2 > 0.01]
-
-fpcRes <- fpc_diagnostic_parallel(dist(pcaScores),B = 1000,nClust = 2:5,seed = 20232024)
-table(fpcRes$FPC_res[[1]]$partition,clusterTable$Cluster)
-plot(fpcRes$plotData$nClust,fpcRes$plotData$Mean_jaccard)
-
-fpcRes <- fpc_diagnostic_parallel(dist(t(gxData_DCM_TMM[gxData_DCM_TMM$gene %in% modelGenes,-1])),B = 1000,nClust = 2:5,seed = 20232024)
-table(fpcRes$FPC_res[[1]]$partition,clusterTable$Cluster)

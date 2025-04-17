@@ -1,8 +1,11 @@
-#------------------#
-#   TITLE          #
-#   BSC Nihant     #
-#------------------#
-
+#------------------------------------#
+#   Deconvolution using cibersortx   #
+#   BSC Nihant                       #
+#------------------------------------#
+localDir <- "../Results/7_deconvolution/"
+if(!dir.exists(localDir)){ dir.create(localDir) }
+if(!dir.exists(paste0(localDir,"/Tables/"))){ dir.create(paste0(localDir,"/Tables/")) }
+if(!dir.exists(paste0(localDir,"/Plots/"))){ dir.create(paste0(localDir,"/Plots/")) }
 #....................................#
 #             Libraries              #----
 #....................................#
@@ -99,82 +102,10 @@ sampleData$Group <- factor(sampleData$Group,
 
 
 
-# Ensembl
-
-test_ciber <- cibersort(sig_matrix = ref_ensembl,
-                        mixture_file = as.matrix(fpkm_data),
-                        perm = 10000,
-                        QN = F)
-
-# test_ciber3 <- cibersort(sig_matrix = ref_ensembl,
-#                         mixture_file = as.matrix(fpkm_data),
-#                         perm = 0)
-plotData <- as.data.frame(test_ciber)
-plotData$Groups <- factor(sampleData$Group,
-                          levels = c("Control","Cluster_1","Cluster_2"))
-
-comps <- list(c("Control","Cluster_1"),
-              c("Control","Cluster_2"),
-              c("Cluster_1","Cluster_2"))
-for (i in 1:22){
-  g1 <- ggplot(plotData,aes(Groups,!!sym(colnames(plotData)[i])))+
-    geom_violin() +
-    stat_compare_means(comparisons = comps,method = "wilcox.test",
-                       label = "p.format") +
-    geom_boxplot(fill = NA) +
-    theme_pubr()
-  
-  chiTest <- chisq_test(table(plotData$Groups, 0 != plotData[,i]))
-  
-  g2 <- ggplot(plotData,aes(Groups, fill = 0 != !!sym(colnames(plotData)[i])))+
-    geom_bar(position = position_dodge()) +
-    labs(fill = paste0(colnames(plotData)[i]," present")) +
-    annotate("text",label = paste0("p.val = ",format(chiTest$p,scientific = -1)),
-             x = 1.2,y = 75) +
-    theme_pubr()
-    
-  ggsave(paste0("../Results/11_deconvolution/Plots/Attemp_1/ensembl_",colnames(plotData)[i],".png"),
-         g1 + g2,width = 21,height = 12,units = "cm")
-}
-
-# Symbol
-test_ciber2 <- cibersort(sig_matrix = reference,
-                         mixture_file = fpkm_symbol,
-                         perm = 10000,
-                         QN = F)
-plotData <- as.data.frame(test_ciber2)
-plotData$Groups <- factor(sampleData$Group,
-                          levels = c("Control","Cluster_1","Cluster_2"))
-
-comps <- list(c("Control","Cluster_1"),
-              c("Control","Cluster_2"),
-              c("Cluster_1","Cluster_2"))
-for (i in 1:22){
-  g1 <- ggplot(plotData,aes(Groups,!!sym(colnames(plotData)[i])))+
-    geom_violin() +
-    stat_compare_means(comparisons = comps,method = "wilcox.test",
-                       label = "p.format") +
-    geom_boxplot(fill = NA) +
-    theme_pubr()
-  
-  chiTest <- chisq_test(table(plotData$Groups, 0 != plotData[,i]))
-  
-  g2 <- ggplot(plotData,aes(Groups, fill = 0 != !!sym(colnames(plotData)[i])))+
-    geom_bar(position = position_dodge()) +
-    labs(fill = paste0(colnames(plotData)[i]," present")) +
-    annotate("text",label = paste0("p.val = ",format(chiTest$p,scientific = -1)),
-             x = 1.2,y = 75) +
-    theme_pubr()
-  
-  ggsave(paste0("../Results/11_deconvolution/Plots/Attemp_2/symbol_",colnames(plotData)[i],".png"),
-         g1 + g2,width = 21,height = 12,units = "cm")
-}
-
-save.image("../Data/saved_wkspaces/11_Deconvolution.RData")
-
-
 # Loading CibersortX results
-test_ciberx <- read.table("../Results/11_deconvolution/CIBERSORTx_Job1_Results.txt",
+# Deconvolution was performed using Cibersortx on https://cibersortx.stanford.edu/
+# Results were saved as "../Results/7_deconvolution/CIBERSORTx_Job1_Results.txt"
+test_ciberx <- read.table("../Results/7_deconvolution/CIBERSORTx_Job1_Results.txt",
                           header = T,
                           sep = "\t")
 
@@ -202,7 +133,7 @@ for (i in 2:23){
              x = 1.2,y = 75) +
     theme_pubr()
   
-  ggsave(paste0("../Results/11_deconvolution/Plots/Attemp_x/symbol_",colnames(plotData)[i],".png"),
+  ggsave(paste0("../Results/7_deconvolution/Plots/symbol_",colnames(plotData)[i],".png"),
          g1 + g2,width = 21,height = 12,units = "cm")
 }
 
@@ -232,6 +163,6 @@ g1 <- plotData |>
         axis.text.x = element_text(angle = 35,vjust = 0.1)) +
   ylab("Estimated cell-type proportion")
 g1
-ggsave("../Results/11_deconvolution/Plots/Attemp_x/all_celltypes.png",g1,
+ggsave("../Results/7_deconvolution/Plots/all_celltypes.png",g1,
        height = 21,width = 19,units = "cm",
        dpi = "retina")

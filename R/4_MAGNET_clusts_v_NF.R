@@ -1,12 +1,15 @@
 #-------------------------------------------#
-#   5- Comparing DCM clusters with donors   #
+#   4- Comparing DCM clusters with donors   #
 #-------------------------------------------#
 #Last run on 12-09-2023
 ##- (1) Setup -#
 set.seed(20230525)
 #-- LocalDir definition
-localDir <- "../Results/5_MAGNET_clusts_v_NF/"
+localDir <- "../Results/4_MAGNET_clusts_v_NF/"
+if(!dir.exists(localDir)){ dir.create(localDir) }
 setwd(localDir)
+if(!dir.exists("Tables")){ dir.create("Tables") }
+if(!dir.exists("Plots")){ dir.create("Plots")}
 #-- Libraries -#
 library(openxlsx)
 library(ggplot2)
@@ -25,8 +28,8 @@ source("../../R/R_subscript/task_analysis_load.R")
 
 
 #-- Data -#
-celScores <- t(read.table("../3_MAGNET_NFvDCM/Cellfie_scores/cellfie_score.txt",sep = ",",header = FALSE))
-celScores_binary <- t(read.table("../3_MAGNET_NFvDCM/Cellfie_scores/cellfie_score_binary.txt",sep = ",",header = FALSE))
+celScores <- t(read.table("../2_MAGNET_NFvDCM/Cellfie_scores/cellfie_score.txt",sep = ",",header = FALSE))
+celScores_binary <- t(read.table("../2_MAGNET_NFvDCM/Cellfie_scores/cellfie_score_binary.txt",sep = ",",header = FALSE))
 phenoData <- read.table("../0_Clean_Data/magnet_phenoData_complete.csv",sep = ",",header = T)
 taskReport <- read.table("../0_Clean_Data/task_report.txt",
                          sep = ",",header = F)
@@ -72,7 +75,7 @@ celScores_reduced <- celScores[,!ubiquitous]
 taskReport_reduced <- taskReport[!ubiquitous,]
 
 
-clustTable <- read.table("../4_MAGNET_DCM_clustering/Tables/DCM_clusts_from_DCM.txt",sep = "\t",header = T)
+clustTable <- read.table("../3_MAGNET_DCM_clustering/Tables/DCM_clusts_from_DCM.txt",sep = "\t",header = T)
 
 phenoData$Cluster <- rep("Control",nrow(phenoData))
 for(i in 1:nrow(clustTable)){
@@ -96,7 +99,7 @@ ggplot(plotData,aes(PC1,PC2,color = Cluster))+
         legend.background = element_rect(fill = "#ECFCFF"))+
   ylab(glue("PC2 ({round(pcaRes@R2[2]*100,1)}%)"))+
   xlab(glue("PC1 ({round(pcaRes@R2[1]*100,1)}%)"))
-  
+
 ggsave("Plots/PCA_point.svg",width = 12,height = 10,units = "cm")
 
 ##- (3) Hypothesis testing
@@ -292,7 +295,7 @@ for(i in 1:nrow(test_tasks_clust1)){
   
 }
 
-save.image("../../Data/saved_wkspaces/5_end.RData")
+save.image("../../Data/saved_wkspaces/4_end.RData")
 
 # 
 # ################
