@@ -3,6 +3,8 @@ Scripts and data related to the manuscript titled "Metabolic task analysis revea
 
 The manuscript is available as a preprint on Biorxiv (https://doi.org/10.1101/2025.03.28.645901)
 
+This repository is currently under revision as preparation for publication, and therefore subject to change.
+
 ## Run order
 ### Subscripts
 R scripts and function in the R/Subscripts folder will be sourced as required.
