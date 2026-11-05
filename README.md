@@ -1,7 +1,7 @@
 # MetabolicTasksDCM
 Scripts and data related to the manuscript titled "Metabolic task analysis reveals distinct metabotypes in end-stage dilated cardiomyopathy"
 
-The manuscript is available as a preprint on Biorxiv (https://doi.org/10.1101/2025.03.28.645901)
+The manuscript is published in Circulation Genomic and Precision Medicine: https://doi.org/10.1161/CIRCGEN.125.005366
 
 This repository is currently under revision as preparation for publication, and therefore subject to change.
 
